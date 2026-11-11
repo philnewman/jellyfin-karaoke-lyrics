@@ -4,7 +4,7 @@ A small Jellyfin Web enhancement that keeps timed lyrics in view, highlights the
 
 ## Current status
 
-This repository is an initial source and CI setup. The browser userscript currently included is **0.3.0**. Its scrolling/highlighting behavior was tested in Jellyfin Web by the maintainer; the plugin wrapper and automated build still need verification against a real Jellyfin 12 installation.
+This repository is an initial source and CI setup. The browser userscript currently included is **0.3.0**. The newer 0.4.0 script discussed during development is not yet in this repository; do not treat this initial package as the final tested browser build. Its scrolling/highlighting behavior was tested in Jellyfin Web by the maintainer; the plugin wrapper and automated build still need verification against a real Jellyfin 12 installation.
 
 **Do not remove an existing userscript installation until the server-plugin path has been built and tested.**
 
