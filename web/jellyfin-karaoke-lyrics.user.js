@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jellyfin Karaoke Lyrics
 // @namespace    https://github.com/philnewman/jellyfin-karaoke-lyrics
-// @version      0.4.0
+// @version      0.4.1
 // @description  Playback-clock lyric highlighting, automatic scrolling, and per-lyrics timing adjustment for Jellyfin Web.
 // @match        http://*/web/*
 // @match        https://*/web/*
@@ -48,7 +48,7 @@
             hash ^= source.charCodeAt(i);
             hash = Math.imul(hash, 16777619);
         }
-        return \`lyrics-\${(hash >>> 0).toString(16)}\`;
+        return `lyrics-${(hash >>> 0).toString(16)}`;
     }
 
     function getPlaybackSeconds() {
@@ -75,14 +75,14 @@
     }
 
     function formatOffset() {
-        return \`\${offsetMs > 0 ? "+" : ""}\${(offsetMs / 1000).toFixed(1)} s\`;
+        return `${offsetMs > 0 ? "+" : ""}${(offsetMs / 1000).toFixed(1)} s`;
     }
 
     function injectStyles() {
         if (document.getElementById("jkl-style")) return;
         const style = document.createElement("style");
         style.id = "jkl-style";
-        style.textContent = \`
+        style.textContent = `
             .lyricPage .lyricsLine.dynamicLyric.jkl-active {
                 color: var(--theme-primary-color, #55b9e9) !important;
                 opacity: 1 !important;
@@ -103,7 +103,7 @@
                 font-variant-numeric: tabular-nums; }
             @media (prefers-reduced-motion: reduce) {
                 .lyricPage .lyricsLine.dynamicLyric { transition: none !important; }
-            }\`;
+            }`;
         document.head.append(style);
     }
 
@@ -112,11 +112,11 @@
         if (!panel) {
             panel = document.createElement("div");
             panel.className = "jkl-controls";
-            panel.innerHTML = \`<span>Lyric timing</span>
+            panel.innerHTML = `<span>Lyric timing</span>
                 <button type="button" data-action="advance" aria-label="Advance lyrics">−</button>
                 <output aria-live="polite"></output>
                 <button type="button" data-action="delay" aria-label="Delay lyrics">+</button>
-                <button type="button" data-action="reset">Reset</button>\`;
+                <button type="button" data-action="reset">Reset</button>`;
             panel.addEventListener("click", event => {
                 const action = event.target.closest("button")?.dataset.action;
                 if (!action || !lyricsKey) return;
@@ -126,7 +126,7 @@
                 saveOffset();
                 panel.querySelector("output").textContent = formatOffset();
                 lastActive = null;
-                console.info(\`[Jellyfin Karaoke Lyrics] Timing offset \${formatOffset()} for \${lyricsKey}\`);
+                console.info(`[Jellyfin Karaoke Lyrics] Timing offset ${formatOffset()} for ${lyricsKey}`);
                 schedule();
             });
             root.append(panel);
@@ -210,7 +210,7 @@
         document.addEventListener("keydown", pauseForManualNavigation);
         interval = window.setInterval(schedule, 250);
         schedule();
-        console.info("[Jellyfin Karaoke Lyrics] 0.4.0 loaded");
+        console.info("[Jellyfin Karaoke Lyrics] 0.4.1 loaded");
     }
 
     start();
