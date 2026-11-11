@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Jellyfin Karaoke Lyrics
 // @namespace    https://github.com/philnewman/jellyfin-karaoke-lyrics
-// @version      0.3.0
-// @description  Automatic scrolling and per-lyrics timing adjustment for Jellyfin Web.
+// @version      0.4.0
+// @description  Playback-clock lyric highlighting, automatic scrolling, and per-lyrics timing adjustment for Jellyfin Web.
 // @match        http://*/web/*
 // @match        https://*/web/*
 // @match        http://*/*/web/*
@@ -48,7 +48,7 @@
             hash ^= source.charCodeAt(i);
             hash = Math.imul(hash, 16777619);
         }
-        return `lyrics-${(hash >>> 0).toString(16)}`;
+        return \`lyrics-\${(hash >>> 0).toString(16)}\`;
     }
 
     function getPlaybackSeconds() {
@@ -60,27 +60,29 @@
     }
 
     function getLyricStartSeconds(line) {
-        const raw = line.dataset.lyrictime;
-        if (raw == null || raw === "") return null;
+        const raw = line.getAttribute("data-lyrictime");
+        if (raw == null || raw.trim() === "") return null;
         const value = Number(raw);
         if (!Number.isFinite(value)) return null;
-        // Jellyfin's LyricLine.Start is a .NET TimeSpan serialized as ticks
-        // (10 million ticks per second). Some Web builds expose milliseconds.
-        // Magnitude-based conversion accommodates both representations.
-        if (Math.abs(value) >= 10000000) return value / 10000000;
+
+        // Jellyfin 12 Web exposes LyricLine.Start as .NET TimeSpan ticks.
+        // Confirmed in the user's browser: 173100000 => 17.31 seconds.
+        // Retain compatibility with older builds that expose milliseconds
+        // or seconds, but do not treat tick values as milliseconds.
+        if (Math.abs(value) >= 1000000) return value / 10000000;
         if (Math.abs(value) >= 1000) return value / 1000;
         return value;
     }
 
     function formatOffset() {
-        return `${offsetMs > 0 ? "+" : ""}${(offsetMs / 1000).toFixed(1)} s`;
+        return \`\${offsetMs > 0 ? "+" : ""}\${(offsetMs / 1000).toFixed(1)} s\`;
     }
 
     function injectStyles() {
         if (document.getElementById("jkl-style")) return;
         const style = document.createElement("style");
         style.id = "jkl-style";
-        style.textContent = `
+        style.textContent = \`
             .lyricPage .lyricsLine.dynamicLyric.jkl-active {
                 color: var(--theme-primary-color, #55b9e9) !important;
                 opacity: 1 !important;
@@ -101,7 +103,7 @@
                 font-variant-numeric: tabular-nums; }
             @media (prefers-reduced-motion: reduce) {
                 .lyricPage .lyricsLine.dynamicLyric { transition: none !important; }
-            }`;
+            }\`;
         document.head.append(style);
     }
 
@@ -110,11 +112,11 @@
         if (!panel) {
             panel = document.createElement("div");
             panel.className = "jkl-controls";
-            panel.innerHTML = `<span>Lyric timing</span>
+            panel.innerHTML = \`<span>Lyric timing</span>
                 <button type="button" data-action="advance" aria-label="Advance lyrics">−</button>
                 <output aria-live="polite"></output>
                 <button type="button" data-action="delay" aria-label="Delay lyrics">+</button>
-                <button type="button" data-action="reset">Reset</button>`;
+                <button type="button" data-action="reset">Reset</button>\`;
             panel.addEventListener("click", event => {
                 const action = event.target.closest("button")?.dataset.action;
                 if (!action || !lyricsKey) return;
@@ -124,6 +126,7 @@
                 saveOffset();
                 panel.querySelector("output").textContent = formatOffset();
                 lastActive = null;
+                console.info(\`[Jellyfin Karaoke Lyrics] Timing offset \${formatOffset()} for \${lyricsKey}\`);
                 schedule();
             });
             root.append(panel);
@@ -134,19 +137,26 @@
     function findActiveLine(root, lines) {
         const playbackSeconds = getPlaybackSeconds();
         if (playbackSeconds !== null) {
-            // Positive offset delays highlighting; negative offset advances it.
-            const adjustedSeconds = playbackSeconds - offsetMs / 1000;
+            // Negative offset advances lyrics; positive offset delays them.
+            // Compare against the audio clock directly, independent of Jellyfin's
+            // pastLyric/futureLyric classes (which may be stale or incorrect).
+            const adjustedSeconds = playbackSeconds - (offsetMs / 1000);
             let selected = null;
             for (const line of lines) {
                 const start = getLyricStartSeconds(line);
                 if (start === null) continue;
+
+                // Jellyfin may append a timestamped but empty terminal line.
+                // It must not become the highlighted/scroll target after the
+                // final sung line. Empty interior lines are also non-vocal cues.
+                if (!line.textContent.trim()) continue;
                 if (start <= adjustedSeconds) selected = line;
                 else break;
             }
-            if (selected) return selected;
+            return selected;
         }
 
-        // Safe fallback for clients where the browser cannot access the media element.
+        // Fallback only when no browser media clock is available.
         return lines.find(line => !line.classList.contains("pastLyric")
             && !line.classList.contains("futureLyric")) || null;
     }
@@ -200,7 +210,7 @@
         document.addEventListener("keydown", pauseForManualNavigation);
         interval = window.setInterval(schedule, 250);
         schedule();
-        console.info("[Jellyfin Karaoke Lyrics] 0.3.0 loaded");
+        console.info("[Jellyfin Karaoke Lyrics] 0.4.0 loaded");
     }
 
     start();
