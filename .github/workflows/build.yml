@@ -1,0 +1,38 @@
+name: Build Jellyfin plugin
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ "v*" ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Build plugin
+        run: dotnet publish Jellyfin.Plugin.KaraokeLyrics/Jellyfin.Plugin.KaraokeLyrics.csproj --configuration Release --output publish
+      - name: Assemble plugin package
+        run: |
+          mkdir -p package/Jellyfin.Plugin.KaraokeLyrics
+          cp publish/Jellyfin.Plugin.KaraokeLyrics.dll package/Jellyfin.Plugin.KaraokeLyrics/
+          cp plugin-meta.json package/Jellyfin.Plugin.KaraokeLyrics/meta.json
+          cd package
+          zip -r ../jellyfin-karaoke-lyrics-plugin.zip Jellyfin.Plugin.KaraokeLyrics
+      - uses: actions/upload-artifact@v4
+        with:
+          name: jellyfin-karaoke-lyrics-plugin
+          path: jellyfin-karaoke-lyrics-plugin.zip
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: jellyfin-karaoke-lyrics-plugin.zip
