@@ -1,7 +1,7 @@
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
-using MediaBrowser.Common.Serialization;
 using MediaBrowser.Model.Plugins;
+using MediaBrowser.Model.Serialization;
 
 namespace Jellyfin.Plugin.KaraokeLyrics;
 
