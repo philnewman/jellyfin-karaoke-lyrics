@@ -1,0 +1,12 @@
+[
+  {
+    "guid": "a3f4e9d2-7b61-4c85-9a20-6e1d3f8b5c72",
+    "name": "Jellyfin Karaoke Lyrics",
+    "description": "Keeps timed lyrics in view in the web client, highlights the line being sung, and adds per-track timing adjustment. Requires JavaScript Injector. Pairs with the Karaoke plugin.",
+    "overview": "Highlighted, auto-scrolling lyrics for the Jellyfin web client",
+    "owner": "philnewman",
+    "category": "General",
+    "imageUrl": "",
+    "versions": []
+  }
+]

@@ -2,7 +2,7 @@
 
 A Jellyfin Web enhancement that keeps timed lyrics in view, highlights the currently playing line, and provides per-track timing adjustment.
 
-**Version:** 0.1.0  
+**Version:** 0.1.2  
 **Jellyfin compatibility:** Jellyfin Server 12.x  
 **Requires:** [JavaScript Injector](https://github.com/n00bcodr/jellyfin-plugin-javascript-injector)
 
@@ -33,36 +33,41 @@ The server plugin registers the included browser script with JavaScript Injector
 - JavaScript Injector installed and enabled, with a release compatible with your Jellyfin version.
 - The Karaoke Lyrics plugin release matching your Jellyfin major version.
 
-### Installation
+### Install from the plugin catalog (recommended)
 
 1. In Jellyfin, install **JavaScript Injector**. If it is not listed in your catalog, add the injector project's repository as documented by that project. Its unified manifest is:
    `https://raw.githubusercontent.com/n00bcodr/jellyfin-plugins/main/manifest.json`
-2. Restart Jellyfin after installing JavaScript Injector.
-3. Download `jellyfin-karaoke-lyrics-plugin.zip` from the [latest GitHub release](https://github.com/philnewman/jellyfin-karaoke-lyrics/releases/latest).
-4. Extract the ZIP. It contains a `Jellyfin.Plugin.KaraokeLyrics` directory with the plugin DLL and `meta.json`.
-5. Copy the contents of that directory into a versioned folder under Jellyfin's data `plugins` directory. For version 0.1.0, the folder name is:
-   `Jellyfin.Plugin.KaraokeLyrics_0.1.0.0`
+2. Open **Dashboard → Plugins → Repositories** and add a repository:
+   - Name: `Karaoke Lyrics`
+   - URL: `https://raw.githubusercontent.com/philnewman/jellyfin-karaoke-lyrics/main/manifest.json`
+3. Open **Catalog**, find **Jellyfin Karaoke Lyrics** under General, and install it.
+4. Restart Jellyfin.
+5. Check the Jellyfin server log for a successful JavaScript Injector registration message, then play a track with synchronized lyrics.
 
-   The resulting layout should look like this:
+Installing from the catalog fills in the plugin's developer and repository details and lets Jellyfin offer updates. To switch a copy you installed by hand, delete its `Jellyfin.Plugin.KaraokeLyrics_<version>` folder, then install from the catalog and restart.
+
+### Or install it by hand
+
+1. Install JavaScript Injector as above and restart Jellyfin.
+2. Download `jellyfin-karaoke-lyrics-plugin.zip` from the [latest GitHub release](https://github.com/philnewman/jellyfin-karaoke-lyrics/releases/latest).
+3. Unzip it into a versioned folder under Jellyfin's `plugins` directory, for example:
 
    ```text
    plugins/
-   └── Jellyfin.Plugin.KaraokeLyrics_0.1.0.0/
+   └── Jellyfin.Plugin.KaraokeLyrics_0.1.2.0/
        ├── Jellyfin.Plugin.KaraokeLyrics.dll
        └── meta.json
    ```
 
-6. Restart Jellyfin.
-7. In **Dashboard → Plugins → My Plugins**, confirm **Karaoke Lyrics** is listed.
-8. Check the Jellyfin server log for a successful JavaScript Injector registration message, then play a track with synchronized lyrics.
+4. Restart Jellyfin and confirm **Jellyfin Karaoke Lyrics** is listed under **Dashboard → Plugins**.
 
 For Docker installations, the `plugins` directory is inside the host directory mounted to `/config`. For example, if your Jellyfin config is mounted at `/path/to/jellyfin/config:/config`, install under `/path/to/jellyfin/config/plugins/`.
 
 ### Updating or uninstalling
 
-To update, stop Jellyfin, replace the files in the versioned plugin directory with the files from the new release, and start Jellyfin again. Follow any version-specific instructions in the release notes.
+A catalog install updates from **Dashboard → Plugins** like any other plugin. For a hand install, stop Jellyfin, replace the files in the versioned plugin directory with the files from the new release, and start Jellyfin again.
 
-To uninstall, stop Jellyfin, remove only the `Jellyfin.Plugin.KaraokeLyrics_<version>` directory, and start Jellyfin. JavaScript Injector is a separate dependency and can remain installed.
+To uninstall, uninstall it from **Dashboard → Plugins** (or remove its `Jellyfin.Plugin.KaraokeLyrics_<version>` directory) and restart Jellyfin. JavaScript Injector is a separate dependency and can remain installed.
 
 ## Standalone browser userscript
 
@@ -82,7 +87,7 @@ dotnet publish Jellyfin.Plugin.KaraokeLyrics/Jellyfin.Plugin.KaraokeLyrics.cspro
   --output publish
 ```
 
-A version tag matching `v*` triggers the release workflow. The workflow packages the plugin as `jellyfin-karaoke-lyrics-plugin.zip` and attaches it to the GitHub release.
+A version tag matching `v*` (for example `v0.1.2`) triggers the release workflow. The workflow packages the plugin as `jellyfin-karaoke-lyrics-plugin.zip`, attaches it to the GitHub release, and adds the version to `manifest.json`, the plugin catalog file, using `scripts/update_manifest.py`.
 
 ## License
 
