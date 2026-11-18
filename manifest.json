@@ -7,6 +7,15 @@
     "owner": "philnewman",
     "category": "General",
     "imageUrl": "",
-    "versions": []
+    "versions": [
+      {
+        "version": "0.1.2.0",
+        "changelog": "See https://github.com/philnewman/jellyfin-karaoke-lyrics/releases/tag/v0.1.2",
+        "targetAbi": "12.0.0.0",
+        "sourceUrl": "https://github.com/philnewman/jellyfin-karaoke-lyrics/releases/download/v0.1.2/jellyfin-karaoke-lyrics-plugin.zip",
+        "checksum": "9cb1ae62fbe6f301e667effcf9271665",
+        "timestamp": "2026-11-18T17:25:42Z"
+      }
+    ]
   }
 ]
