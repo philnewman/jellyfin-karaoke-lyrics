@@ -17,6 +17,12 @@ A Jellyfin Web enhancement that keeps timed lyrics in view, highlights the curre
 - Briefly pauses automatic scrolling after manual navigation.
 - Can run as a server-installed plugin through JavaScript Injector, or as a standalone browser userscript.
 
+## Pairs with Jellyfin Karaoke
+
+For a full karaoke setup, add [Jellyfin Karaoke](https://github.com/philnewman/jellyfin-karaoke).
+It puts a karaoke switch and a vocal level slider in the web client's now-playing bar, so you can
+turn the singer down while this plugin shows the words. The two can be installed side by side.
+
 ## Install the Jellyfin server plugin
 
 The server plugin registers the included browser script with JavaScript Injector. You do not need to install Tampermonkey or another userscript manager when using this integration.
