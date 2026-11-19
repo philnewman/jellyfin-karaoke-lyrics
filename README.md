@@ -91,4 +91,4 @@ A version tag matching `v*` (for example `v0.1.2`) triggers the release workflow
 
 ## License
 
-MIT
+GPL-3.0, because the plugin builds on Jellyfin's GPL-3.0 libraries. See [LICENSE](LICENSE).
